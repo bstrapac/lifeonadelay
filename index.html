@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Life on a delay</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular-route.min.js"></script>
+        
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/main.css">
+        <link href="https://css.gg/css?=|add|home-alt|instagram|log-in|mail|patreon|profile" rel="stylesheet">
+
+    </head>
+    <body  ng-app="app"  ng-controller="cntrl">
+        <div class="wrapper">
+            <div class="header">
+                <div class="login">
+                       <a href="#!login"><i class="gg-log-in"></i></a> 
+                </div>
+            </div>
+            <div class="navigation">
+                <div>
+                    <ul>
+                        <li><a href="#!/">Početna</a></li>
+                        <li><a href="#!contact">Kontakt</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="content" ng-view>
+            </div>
+            <footer class="footer">
+                <div class="contact_information">
+                    <div><i class="gg-profile"></i>Barbara Strapač</div>
+                    <div><i class="gg-instagram"></i>Instagram</div>
+                    <div><i class="gg-mail"></i>E-mail</div>
+                    <div><i class="gg-patreon"></i>Patreon</div>
+                </div>
+                <div class="copyrights">
+                    &copy; 2020.
+                </div>
+            </footer>
+        </div>
+        <script src="js/app.js"></script>
+        <script src="js/controller.js"></script>
+    </body>
+</html>

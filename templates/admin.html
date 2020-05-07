@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Life on a delay</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular-route.min.js"></script>
+        
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../css/admin.css">
+        <link href="https://css.gg/css?=|add|log-off|profile|edit-markup|check|erase" rel="stylesheet">
+    </head>
+    <body  ng-app="app"  ng-controller="cntrl" >
+        <div class="wrapper">
+            <div class="navigation">
+                <div class="menu">
+                    <ul >
+                        <li class="menu_item"><a href="">Početna</a></li>
+                        <li class="menu_item"><a href="">Zahtjevi</a></li>
+                    </ul>   
+                </div>
+                <div class="logout">
+                        <a ng-click="Logout()"><i class="gg-log-off"></i></a> 
+                </div>
+            </div>
+            <div class="dashboard"  ng-view>
+                <div class="posts" ng-init= "LoadAllPosts()"> 
+                    <a ng-repeat="post in posts">
+                        <div class="post">
+                            <div class="post_title">{{post.title}}</div>
+                            <div class="post_content">{{post.content | limitTo: 250}}
+                            </div>
+                        </div> 
+                    </a>
+                </div>
+                <div class="edit">
+                    <textarea id="title" cols="1" rows="1"  placeholder="Naslov"></textarea>
+                    <button class="save_title"><i class="gg-check"></i></button>
+                    <textarea id="content" cols="1" rows="50" placeholder="Sadržaj"></textarea>
+                    <button class="save_content"><i class="gg-check"></i></button>
+                    <button class="save_all" ng-click="AddNewPost()">Spremi sve</button>
+                    <button class="delete_all" ng-click="DeletePost(post_id)">Obriši</button>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="copyrights">
+                    &copy; 2020.
+                </div>
+            </footer>
+        </div>
+        <script src="../js/app.js"></script>
+    </body>
+</html>

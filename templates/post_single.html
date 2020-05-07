@@ -1,0 +1,37 @@
+<div ng-init="LoadPost( post_id );">
+    <div class="single_post" ng-repeat="pst in post">
+        <h2 class="single_title"> {{ pst.title }} </h2>
+            <div class="single_content"> 
+                <div class="single_image"></div>
+                <p>
+                    {{pst.content}}
+                </p>
+                <div class="single_author">{{ pst.author_name }}</div>
+                <div class="single_date">{{pst.date | limitTo: 10 | date: dd.mm.yyyy}}</div>
+            </div>
+        </div>
+        <div ng-init="LoadComments( post_id )">
+            <div class="post_comments" ng-repeat="cmnt in comments">
+                <div class="comment" >
+                    <div class="comment_author">{{cmnt.username}}, {{cmnt.date | limitTo: 10 | date: dd.mm.yyyy}}</div>
+                    <button ng-click="DeleteComment( cmnt.id )" class="delete_comment">×</button>
+                    <div class="comment_content">
+                        <p>
+                            {{cmnt.content}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="add_coment">
+            <form>
+                <label>Dodaj komentar: </label><br>
+                <textarea id="nickname" ng-model="nickname" placeholder="Nadimak" cols="1" rows="1"></textarea>
+                <br>
+                <label for="new_comment"></label>
+                <textarea id="new_comment" ng-model="new_comment" placeholder="Komentar..." cols="1" rows="5"></textarea>
+                <br>
+                <button type="submit" ng-click="AddNewComment( post_id )">Dodaj komentar</button>
+            </form>
+        </div>
+</div>

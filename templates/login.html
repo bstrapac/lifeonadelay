@@ -1,0 +1,30 @@
+<div class="split_login">
+    <div class="login_form">
+        <form action="">
+            <label for="email">E-mail:</label><br>
+            <input type="text" id="email" ng-model="email" required><br>
+            <label for="password">Lozinka:</label><br>
+            <input type="password" id="password" ng-model="password" required><br>
+            <button ng-click="Login()">Prijava</button>
+        </form>
+    </div>
+    <div class="register_form">
+        <form action="">
+            <label for="username">Korisničko ime:</label><br>
+            <input type="text" id="username" ng-model="username" required><br>
+            <label for="firstname">Ime:</label><br>
+            <input type="text" id="firstname" ng-model="firstname"required><br>
+            <label for="lastname">Prezime:</label><br>
+            <input type="text" id="lastname" ng-model="lastname" required><br>
+            <label for="email_reg">E-mail:</label><br>
+            <input type="text" id="email_reg" ng-model="email_reg" required><br>
+            <label for="password_reg">Lozinka:</label><br>
+            <input type="password" id="password_reg" ng-model="password_reg" required><br>
+            <label for="phone">Telefonski broj:</label><br>
+            <input type="text" id="phone" ng-model="phone" required><br>
+            <label for="dob">Datum rođenja: </label><br>
+            <input type="text" id="dob" ng-model="dob" required><br>
+            <button  type="submit" ng-click="Register()" >Registriraj se!</button>
+        </form>
+    </div>
+</div>
