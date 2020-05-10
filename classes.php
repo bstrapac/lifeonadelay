@@ -38,20 +38,26 @@ class Comment
 } 
 class User
 {
-	public $user_id = '';
+	public $id = '';
 	public $username = '';
 	public $firstname = '';
 	public $lastname = '';
-	public $user_role ='';
-	public $user_active = '';
-	public function __construct($user_id ,$username, $firstname, $lastname, $user_role, $user_active)
+	public $email = '';
+	public $birth_date = '';
+	public $phonenumber = '';
+	public $role ='';
+	public $active = '';
+	public function __construct($id ,$username, $firstname, $lastname, $email, $birth_date, $phonenumber, $role, $active)
 	{
-		$this->user_id = $user_id;
+		$this->id = $id;
 		$this->username = $username;
 		$this->firstname = $firstname;
 		$this->lastname = $lastname;
-		$this->user_role = $user_role;
-		$this->user_active = $user_active;
+		$this->email = $email;
+		$this->birth_date = $birth_date;
+		$this->phonenumber = $phonenumber;
+		$this->role = $role;
+		$this->active = $active;
 
 	}
 }

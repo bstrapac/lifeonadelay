@@ -54,13 +54,12 @@ switch($actionID)
             $rvsp['count'] = $count;
         }
         echo json_encode($rvsp);
-    break;
+    break;*/
     case 'add_post':
-        $post_id = $postdata->post_id;
-        $post_title = $postdata->post_title;
-        $post_content = $postdata->post_content;
+        $post_title = $postdata->title;
+        $post_content = $postdata->content;
         $user_id = $postdata->user_id;
-        $sql = "exec post_new ".$post_id.", '".$post_title."', '".$post_content."', '".$user_id."';" ;
+        $sql = "exec post_new '".$post_title."', '".$post_content."', '".$user_id."';" ;
         $record = $conn->query($sql);
     break;
     case 'delete_post':
@@ -68,7 +67,7 @@ switch($actionID)
         $sql = "exec post_delete ".$post_id.";" ;
         $record = $conn->query($sql);
     break;
-    case 'edit_post_title':
+    /*case 'edit_post_title':
         $post_id = $postdata->post_id;
         $post_title = $postdata->post_title;
         $sql = "exec post_edit_title ".$post_id.", '".$post_title."';" ;
@@ -79,15 +78,14 @@ switch($actionID)
         $post_content = $postdata->post_content;
         $sql = "exec post_edit_content ".$post_id.", '".$post_content."';" ;
         $record = $conn->query($sql);
-    break;
+    break;*/
      case 'edit_post':
         $post_id = $postdata->post_id;
-        $post_title = $postdata->post_title;
-        $post_content = $postdata->post_content;
+        $post_title = $postdata->new_title;
+        $post_content = $postdata->new_content;
         $sql = "exec post_edit ".$post_id.",'".$post_title."','".$post_content."';" ;
         $record = $conn->query($sql);
     break;
-    */
     case 'get_comments':
         $post_id = $postdata->post_id;
         $sql = "exec comments_load ".$post_id.";" ;

@@ -1,0 +1,49 @@
+<div ng-init="LoadAllPosts()">
+    <div class="col-sm-6 col-lg-3" ng-repeat="post in posts">
+        <div class="card text-white bg-flat-color-1">
+            <div class="card-body pb-0">
+                <div class="dropdown float-right">
+                    <button class="btn bg-transparent dropdown-toggle theme-toggle text-light" type="button" id="dropdownMenuButton1" data-toggle="dropdown">
+                        <i class="fa fa-cog"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <div class="dropdown-menu-content">
+                            <a class="dropdown-item" href="#!edit_post/{{post.id}}">Uredi</a>
+                            <a class="dropdown-item" data-toggle="modal" data-target="#staticModal" ng-click="passParam(post.id)">Obriši</a>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="mb-0">
+                    <span class="count">{{post.title}}</span>
+                </h4>
+                <p class="text-light">{{post.content | limitTo: 100}}</p>
+                <div class="chart-wrapper px-0" style="height:70px;" height="70">
+                    <canvas id="widgetChart1"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="staticModal" tabindex="-1" role="dialog" aria-labelledby="staticModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticModalLabel">Brisanje posta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Da li zbilja želite obrisati post? {{param}}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ne</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="DeletePost(paramPassed)">Da</button>
+            </div>
+        </div>
+    </div>
+</div>

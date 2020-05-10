@@ -1,0 +1,16 @@
+<div class="row form-group">
+    <div class="col-12 col-md-9">
+        <input type="text" id="text-input" name="text-input" placeholder="Naslov..." class="form-control" ng-model="new_title">
+    </div>
+    <div class="col-12 col-md-9">
+        <textarea name="textarea-input" id="textarea-input" rows="9" placeholder="Sadržaj..." class="form-control" ng-model="new_content"></textarea>
+    </div>
+</div>
+<div class="card-footer">
+    <button type="submit" class="btn btn-primary btn-sm" ng-click="AddNewPost(1)">
+        <i class="fa fa-dot-circle-o"></i> Spremi
+    </button>
+    <button type="reset" class="btn btn-danger btn-sm">
+        <i class="fa fa-ban"></i> Odustani
+    </button>
+</div>

@@ -1,0 +1,22 @@
+<div ng-init="LoadPost(post_id)">
+    <div class="row form-group" ng-repeat="pst in post">
+        <div class="col-12 col-md-9">
+            <textarea name="textarea-input" id="textarea-input" rows="1" placeholder="Title..." class="form-control new_title">
+                {{pst.title}}
+            </textarea>
+        </div>
+        <div class="col-12 col-md-9">
+            <textarea name="textarea-input" id="textarea-input" rows="15" placeholder="Content..." class="form-control new_content">
+                {{pst.content}}
+            </textarea>
+        </div>
+    </div>
+     <div class="card-footer">
+        <button type="submit" class="btn btn-primary btn-sm" ng-click="EditPost(post_id)">
+            <i class="fa fa-dot-circle-o"></i> Spremi
+        </button>
+        <button type="reset" class="btn btn-danger btn-sm">
+            <i class="fa fa-ban"></i> Odustani
+        </button>
+    </div>
+</div>

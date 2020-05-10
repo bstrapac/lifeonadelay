@@ -33,8 +33,8 @@ switch($jsonID)
         array_push($json,$post);
         }
     break;
-    /*case 'get_all_posts':
-        $sql = "exec posts_load_all;";
+    case 'get_all_posts':
+        $sql = "exec post_load_all;";
         $record = $conn->query($sql);
         while($row = $record->fetch(PDO::FETCH_BOTH))
         {
@@ -54,16 +54,19 @@ switch($jsonID)
         while($row = $record->fetch(PDO::FETCH_BOTH))
         {
             $user = new User(
-                $row['user_id'],
+                $row['id'],
                 $row['username'],
                 $row['firstname'],
                 $row['lastname'],
-                $row['user_role'],
-                $row['user_active']
+                $row['email'],
+                $row['birth_date'],
+                $row['phonenumber'],
+                $row['role'],
+                $row['active']
             );
             array_push($json,$user);
         }
-    break;*/
+    break;
 }
 echo json_encode($json)
 ?>
