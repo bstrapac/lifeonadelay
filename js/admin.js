@@ -1,4 +1,4 @@
-var admin = angular.module("admin", ["ngRoute"]);
+var admin = angular.module("admin", ["ngRoute", "ngCookies"]);
 
 admin.config(function($routeProvider){
     $routeProvider
@@ -13,13 +13,60 @@ admin.config(function($routeProvider){
     .when("/add_new",{
         templateUrl:"templates/new_post.html",
         controller: "admin_cntrl"
+    })
+    .when("/pending_users",{
+        templateUrl:"templates/users.html",
+        controller: "admin_cntrl"
+    })
+    .when("/login",{
+        templateUrl:"templates/login.html",
+        controller: "admin_cntrl"
+    })
+    .when("/register",{
+        templateUrl:"templates/register.html",
+        controller: "admin_cntrl"
     });
 });
-admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
+admin.directive("fileInput", function($parse){
+    return{
+        link: function($scope, element, attrs){
+            element.on("change", function(event){
+                var files = event.target.files;
+                //console.log(files[0].name);
+                $parse(attrs.fileInput).assign($scope, element[0].files);
+                $scope.$apply();
+            });
+        }
+    }
+});
+admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location ){
     $scope.passParam = function(param){
-        console.log('fja param pass');
+        //console.log('fja param pass');
         $scope.paramPassed = param;
-        console.log(param);
+        //console.log(param);
+    }
+    $scope.uploadFile = function(){
+        var form_data = new FormData();
+        
+        angular.forEach($scope.files, function(file){
+            form_data.append('file', file);
+        });
+       $http.post('upload.php', form_data, {
+            transformRequest: angular.identity, 
+            headers :{'Content-Type': undefined, 'Process-Data': false}
+        }).then(function(response){
+            alert(response);
+            $scope.select();
+        });
+    }
+    $scope.images = [];
+    $scope.select = function(){
+        $http.get("select.php")
+        .then(function(response){
+            console.log(response.data);
+            $scope.images = response.data;
+            console.log(images);
+        });
     }
     //FUNKCIJE ZA MANIPULACIJU POSTOVIMA
     $scope.posts = [];
@@ -34,7 +81,7 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
             console.log(e);
         });
     };
-    $scope.LoadAllUsersPosts = function(){
+    $scope.LoadAllUsersPosts = function(user_id){
         var postData = {
             'action_id' : 'get_all_user_posts',
             'user_id' : user_id
@@ -61,32 +108,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
             console.log(e);
         });
     };
-    /*$scope.EditPostTitle = function(post_id){
-        var postData ={
-            'action_id' : 'post_edit_title',
-            'post_id' : post_id,
-            'new_title' : $scope.new_title
-        }
-        $http.post('action.php', postData).then
-        (function(response){
-            console.log(response.data);
-        }, function(e){
-            console.log(e);
-        });
-    };
-    $scope.EditPostContent = function(post_id){
-        var postData ={
-            'action_id' : 'post_edit_content',
-            'post_id' : post_id,
-            'new_content' : $scope.new_content
-        }
-        $http.post('action.php', postData).then
-        (function(response){
-            console.log(response.data);
-        }, function(e){
-            console.log(e);
-        });
-    };*/
     $scope.EditPost = function(post_id){
         var new_title = angular.element( document.querySelector( '.new_title' ) );
         var new_content = angular.element( document.querySelector( '.new_content' ) );
@@ -98,8 +119,8 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
         }
         $http.post('action.php', postData).then
         (function(response){
-            console.log(postData.post_id);
-            console.log(new_title.val());
+            //console.log(postData.post_id);
+            //console.log(new_title.val());
         }, function(e){
             console.log(e);
         });
@@ -109,12 +130,14 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
             'action_id': 'add_post',
             'title' : $scope.new_title,
             'content' : $scope.new_content,
+            //'image' : form_data.file,
             'user_id' : user_id
         }
         $http.post('action.php', postData).then
         (function(response){
             //console.log(response.data);
             //$route.reload();
+            $location.path('/');
         },
         function(e){
             console.log(e);
@@ -127,7 +150,7 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
         }
         $http.post('action.php', postData).then
         (function(response){
-            //console.log(comment_id);
+            //console.log(post_id);
             $route.reload();
         },
         function(e){
@@ -162,7 +185,8 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
         };
         $http.post('action.php', postData).then
         (function(response){
-            console.log(response.data);
+            //console.log(postData);
+            $location.path('/');
         }, function (e){
             console.log(e);
         });
@@ -173,7 +197,8 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
         };
         $http.post('action.php', postData).then
         (function(response){
-            console.log(response.data);
+            //console.log(response.data);
+            $location.path('/login');
         }, function(e){
             console.log(e);
         });
@@ -187,7 +212,7 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
             'email' : $scope.email_reg,
             'password' : $scope.password_reg,
             'phone' : $scope.phone,
-            'dob' : $scope.dob
+            'birth_date' : $scope.birth_date
         };
         $http.post('action.php', postData).then
         (function(response){
@@ -201,6 +226,17 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
         $http({
 			method: 'GET',
 			url: 'json.php?json_id=get_pending_users'
+		}).then(function(response) {
+            $scope.users = response.data;
+            //console.log(response.data);
+		}, function(e) {
+			console.log(e);
+		});
+    };
+    $scope.LoadUsers = function(){
+        $http({
+			method: 'GET',
+			url: 'json.php?json_id=get_users'
 		}).then(function(response) {
             $scope.users = response.data;
             //console.log(response.data);
@@ -226,7 +262,7 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route){
             'user_id' : user_id
         };
         $http.post('action.php', postData).then
-        (function(reponse){
+        (function(response){
             console.log(response.data);
         }, function(e){
             console.log(e);

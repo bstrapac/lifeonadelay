@@ -1,4 +1,4 @@
-var public = angular.module("public", ["ngRoute"]);
+var public = angular.module("public", ["ngRoute", "ngCookies"]);
 
 public.config(function($routeProvider){
     $routeProvider
@@ -8,10 +8,6 @@ public.config(function($routeProvider){
    })
     .when("/post_single/:post_id",{
        templateUrl:"templates/post_single.html",
-       controller: "cntrl"
-   })
-   .when("/login",{
-       templateUrl:"templates/login.html",
        controller: "cntrl"
    });
 });
@@ -77,7 +73,7 @@ public.controller("cntrl", function($scope, $routeParams, $http, $route){
         });
     };
     //dodavanje novog komentara na odabrani post, timestamp se dodaje u procc preko GETDATE()
-    $scope.AddNewComment = function( post_id ){
+    $scope.AddNewComment = function(post_id){
         var postData= {
             'action_id': 'post_comment',
             'username': $scope.nickname,

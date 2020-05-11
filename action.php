@@ -21,6 +21,7 @@ switch($actionID)
                 $row['title'],
                 $row['content'],
                 $row['date'],
+                $row['image'],
                 $row['author_name']
             );
             array_push($rvsp, $post);
@@ -45,6 +46,7 @@ switch($actionID)
                 $row['title'],
                 $row['content'],
                 $row['date'],
+                $row['image'],
                 $row['author_name']
             );
             array_push($rvsp, $post);
@@ -67,18 +69,6 @@ switch($actionID)
         $sql = "exec post_delete ".$post_id.";" ;
         $record = $conn->query($sql);
     break;
-    /*case 'edit_post_title':
-        $post_id = $postdata->post_id;
-        $post_title = $postdata->post_title;
-        $sql = "exec post_edit_title ".$post_id.", '".$post_title."';" ;
-        $record = $conn->query($sql);
-    break;
-     case 'edit_post_content':
-        $post_id = $postdata->post_id;
-        $post_content = $postdata->post_content;
-        $sql = "exec post_edit_content ".$post_id.", '".$post_content."';" ;
-        $record = $conn->query($sql);
-    break;*/
      case 'edit_post':
         $post_id = $postdata->post_id;
         $post_title = $postdata->new_title;
@@ -113,26 +103,29 @@ switch($actionID)
     break;
     case 'delete_comment':
         $comment_id = $postdata->comment_id;
-        $sql = "DELETE FROM comments WHERE id =".$comment_id.";";
+        $sql = "exec comment_delete ".$comment_id.";";
         $record = $conn->query($sql);
     break;
     case 'login':
-        $email = $postData->email;
-        $password = $postData->password;
+        $email = $postdata->email;
+        $password = $postdata->password;
         $sql = "exec login '".$email."', '".$password."'";
         $record = $conn->query($sql);
-        while($row = $record->fetch(PDO::FETCH_BOTH))
-        {
-            $user = new User(
-                $row['user_id'],
-                $row['username'],
-                $row['firstname'],
-                $row['lastname'],
-                $row['user_role'],
-                $row['user_active']
-            );
-            array_push($json,$user);
-        }
+        $row = $record->fetch();
+        $rvsp = array();
+        $user = new User(
+            $row['id'],
+            $row['username'],
+            $row['firstname'],
+            $row['lastname'],
+            $row['email'],
+            $row['birth_date'],
+            $row['phonenumber'],
+            $row['role'],
+            $row['active']
+        );
+        array_push($rvsp, $user);
+        echo json_encode($rvsp);
     break;
     case 'logout':
         //kodčina ide tu
@@ -144,18 +137,19 @@ switch($actionID)
         $email = $postdata->email;
         $phone = $postdata->phone;
         $password = $postdata->password;
-        $sql = "exec user_register '".$username."', '".$firstname."', '".$lastname."','".$email."', '".$phone."', '".$password."', 2, 0 ";
+        $birth_date = $postdata->birth_date;
+        $sql = "exec user_register '".$username."', '".$password."', '".$firstname."', '".$lastname."','".$email."', '".$birth_date."', '".$phone."';";
         $record = $conn->query($sql);
     break;
-    /*case 'approve_user':
+    case 'approve_user':
         $user_id = $postdata->user_id;
         $sql = "exec user_active ".$user_id.";";
         $record = $conn->query($sql);
     break;
     case 'delete_pending_user':
         $user_id = $postdata->user_id;
-        $sql = "exec delete_pending_user ".$user_id.";";
+        $sql = "exec user_delete_pending ".$user_id.";";
         $record = $conn->query($sql);
-    break;*/
+    break;
 }
 ?>

@@ -28,6 +28,7 @@ switch($jsonID)
             $row['title'],
             $row['content'],
             $row['date'],
+            $row['image'],
             $row['author_name']
         );
         array_push($json,$post);
@@ -43,6 +44,7 @@ switch($jsonID)
                 $row['title'],
                 $row['content'],
                 $row['date'],
+                $row['image'],
                 $row['author_name']
             );
             array_push($json,$post);
@@ -50,6 +52,25 @@ switch($jsonID)
     break;
     case 'get_pending_users':
         $sql = "exec user_nonactive;";
+        $record = $conn->query($sql);
+        while($row = $record->fetch(PDO::FETCH_BOTH))
+        {
+            $user = new User(
+                $row['id'],
+                $row['username'],
+                $row['firstname'],
+                $row['lastname'],
+                $row['email'],
+                $row['birth_date'],
+                $row['phonenumber'],
+                $row['role'],
+                $row['active']
+            );
+            array_push($json,$user);
+        }
+    break;
+    case 'get_users':
+        $sql = "exec user_all;";
         $record = $conn->query($sql);
         while($row = $record->fetch(PDO::FETCH_BOTH))
         {

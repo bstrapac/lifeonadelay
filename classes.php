@@ -11,14 +11,16 @@ class Post
 	public $id = '';
 	public $title ='';
 	public $content ='';
-    public $date= '';
+	public $date= '';
+	public $image = '';
     public $author_name = '';
-	public function __construct($id, $title,$content, $date, $author_name)
+	public function __construct($id, $title,$content, $date, $image, $author_name)
 	{
 		$this->id = $id;
 		$this->title = $title;
 		$this->content =$content;
-        $this->date = $date;
+		$this->date = $date;
+		$this->image = $image;
         $this->author_name = $author_name;
 	}	
 }
