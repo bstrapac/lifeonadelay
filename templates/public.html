@@ -5,9 +5,9 @@
 		</a>
 		<hr>
 		<div class="in-content">
-			<img class="right" src="img/post-img.jpg" alt="">
+			<img class="right" src="../lifeonadelay/upload/{{post.image}}" alt="">
 			<p>
-				{{post.content | limitTo: 500}}...
+				{{post.content | limitTo: 500}}... 
 			</p>
 			<a class="read-more" href="#!post_single/{{post.id}}">Read more</a>
 		</div>
@@ -15,7 +15,7 @@
 			<div class="units-row">
 				<div class="unit-100">
 					<a>{{post.date | limitTo: 10  | date: dd.mm.yyyy}}</a>,
-					<a>{{post.author_name}}</a>,
+					<a>{{post.author_name}}</a>
 				</div>
 			</div>
 		</div>

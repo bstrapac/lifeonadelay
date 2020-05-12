@@ -8,6 +8,7 @@ $actionID = $postdata->action_id;
 
 switch($actionID)
 {
+    //postovi
     case 'get_single_post':
         $post_id = $postdata->post_id;
         $sql = "exec post_single ".$post_id.";" ;
@@ -60,8 +61,9 @@ switch($actionID)
     case 'add_post':
         $post_title = $postdata->title;
         $post_content = $postdata->content;
+        $post_image = $postdata->image;
         $user_id = $postdata->user_id;
-        $sql = "exec post_new '".$post_title."', '".$post_content."', '".$user_id."';" ;
+        $sql = "exec post_new '".$post_title."', '".$post_content."','".$post_image."' ,'".$user_id."';" ;
         $record = $conn->query($sql);
     break;
     case 'delete_post':
@@ -76,6 +78,7 @@ switch($actionID)
         $sql = "exec post_edit ".$post_id.",'".$post_title."','".$post_content."';" ;
         $record = $conn->query($sql);
     break;
+    //komentari
     case 'get_comments':
         $post_id = $postdata->post_id;
         $sql = "exec comments_load ".$post_id.";" ;
@@ -106,6 +109,7 @@ switch($actionID)
         $sql = "exec comment_delete ".$comment_id.";";
         $record = $conn->query($sql);
     break;
+    //useri
     case 'login':
         $email = $postdata->email;
         $password = $postdata->password;
@@ -150,6 +154,33 @@ switch($actionID)
         $user_id = $postdata->user_id;
         $sql = "exec user_delete_pending ".$user_id.";";
         $record = $conn->query($sql);
+    break;
+    //pomoćne funkcije
+    case 'image_upload':
+        if(!empty($_FILES))  
+        {  
+             $path = 'upload/' . $_FILES['file']['name'];  
+             if(move_uploaded_file($_FILES['file']['tmp_name'], $path))  
+             {  
+                $image_path = $_FILES['file']['name'];
+                //array_push($rvsp, $image_path);
+                echo json_encode($image_path);
+                 /*//$post_title = $postdata->title;
+                 //$post_content = $postdata->content;
+                 //$user_id = $postdata->user_id;
+                 //$sql = "exec post_new '".$post_title."', '".$post_content."', ('lifeonadelay/upload/".$_FILES['file']['name']."'), ".$user_id." ;" ;
+                 //$record = $conn->query($sql);
+                 /* $sql = "INSERT INTO tbl_images(name) VALUES ('".$_FILES['file']['name']."')";
+                 if($record = $conn->query($sql))
+                 {  
+                      echo 'File Uploaded';  
+                 }  
+                 else  
+                 {  
+                      echo 'File Uploaded But not Saved';  
+                 } */ 
+             }  
+        }  
     break;
 }
 ?>

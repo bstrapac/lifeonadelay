@@ -45,29 +45,39 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         $scope.paramPassed = param;
         //console.log(param);
     }
+    $scope.img = '';
     $scope.uploadFile = function(){
-        var form_data = new FormData();
-        
-        angular.forEach($scope.files, function(file){
-            form_data.append('file', file);
+        var postdata = new FormData();
+        /*angular.forEach($scope.files, function(file){
+            postdata.append('file', file);
+            postdata.append('action_id', 'image_upload');
         });
-       $http.post('upload.php', form_data, {
+        var postdata ={
+            'action_id' : 'image_upload'
+            //'file': $scope.files
+        }*/
+        angular.forEach($scope.files, function(file){
+            postdata.append('file', file);
+        })
+       $http.post('upload.php', postdata, {
             transformRequest: angular.identity, 
             headers :{'Content-Type': undefined, 'Process-Data': false}
         }).then(function(response){
-            alert(response);
-            $scope.select();
+            //alert(response);
+            $scope.img = response.data;
+            console.log($scope.img);
+            //$scope.select();
         });
-    }
+    };
     $scope.images = [];
     $scope.select = function(){
         $http.get("select.php")
         .then(function(response){
-            console.log(response.data);
+            //console.log(response.data);
             $scope.images = response.data;
-            console.log(images);
+            //console.log($scope.images); //array slika
         });
-    }
+    };
     //FUNKCIJE ZA MANIPULACIJU POSTOVIMA
     $scope.posts = [];
     $scope.LoadAllPosts = function(){
@@ -125,12 +135,13 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             console.log(e);
         });
     };
-    $scope.AddNewPost = function( user_id ){
+    $scope.AddNewPost = function( user_id, img ){
+        console.log(img.replace('"', ''));
         var postData= {
             'action_id': 'add_post',
             'title' : $scope.new_title,
             'content' : $scope.new_content,
-            //'image' : form_data.file,
+            'image' : img.replace('"',''),
             'user_id' : user_id
         }
         $http.post('action.php', postData).then
