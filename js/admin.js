@@ -32,7 +32,6 @@ admin.directive("fileInput", function($parse){
         link: function($scope, element, attrs){
             element.on("change", function(event){
                 var files = event.target.files;
-                //console.log(files[0].name);
                 $parse(attrs.fileInput).assign($scope, element[0].files);
                 $scope.$apply();
             });
@@ -41,21 +40,11 @@ admin.directive("fileInput", function($parse){
 });
 admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location ){
     $scope.passParam = function(param){
-        //console.log('fja param pass');
         $scope.paramPassed = param;
-        //console.log(param);
     }
     $scope.img = '';
     $scope.uploadFile = function(){
         var postdata = new FormData();
-        /*angular.forEach($scope.files, function(file){
-            postdata.append('file', file);
-            postdata.append('action_id', 'image_upload');
-        });
-        var postdata ={
-            'action_id' : 'image_upload'
-            //'file': $scope.files
-        }*/
         angular.forEach($scope.files, function(file){
             postdata.append('file', file);
         })
@@ -63,19 +52,15 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             transformRequest: angular.identity, 
             headers :{'Content-Type': undefined, 'Process-Data': false}
         }).then(function(response){
-            //alert(response);
             $scope.img = response.data;
             console.log($scope.img);
-            //$scope.select();
         });
     };
     $scope.images = [];
     $scope.select = function(){
         $http.get("select.php")
         .then(function(response){
-            //console.log(response.data);
             $scope.images = response.data;
-            //console.log($scope.images); //array slika
         });
     };
     //FUNKCIJE ZA MANIPULACIJU POSTOVIMA
@@ -86,7 +71,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             url: 'json.php?json_id=get_all_posts'
         }).then(function(response){
             $scope.posts = response.data;
-            //console.log(response);
         }, function(e){
             console.log(e);
         });
@@ -113,7 +97,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         $http.post('action.php', postData).then
         (function(response){
             $scope.post = response.data;
-            //console.log($scope.post);
         }, function(e){
             console.log(e);
         });
@@ -129,8 +112,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         }
         $http.post('action.php', postData).then
         (function(response){
-            //console.log(postData.post_id);
-            //console.log(new_title.val());
         }, function(e){
             console.log(e);
         });
@@ -146,8 +127,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         }
         $http.post('action.php', postData).then
         (function(response){
-            //console.log(response.data);
-            //$route.reload();
             $location.path('/');
         },
         function(e){
@@ -161,7 +140,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         }
         $http.post('action.php', postData).then
         (function(response){
-            //console.log(post_id);
             $route.reload();
         },
         function(e){
