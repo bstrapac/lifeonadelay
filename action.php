@@ -1,5 +1,6 @@
 <?php
 include "connection.php";
+session_start();
 $actionID="";
 $postData = file_get_contents("php://input");
 $postdata = json_decode ($postData);
@@ -116,23 +117,36 @@ switch($actionID)
         $sql = "exec login '".$email."', '".$password."'";
         $record = $conn->query($sql);
         $row = $record->fetch();
+        $count = $record->rowCount();
         $rvsp = array();
-        $user = new User(
-            $row['id'],
-            $row['username'],
-            $row['firstname'],
-            $row['lastname'],
-            $row['email'],
-            $row['birth_date'],
-            $row['phonenumber'],
-            $row['role'],
-            $row['active']
-        );
-        array_push($rvsp, $user);
+        //echo $count;
+        if($count != 0){
+            $user = new User(
+                $row['id'],
+                $row['username'],
+                $row['firstname'],
+                $row['lastname'],
+                $row['email'],
+                $row['birth_date'],
+                $row['phonenumber'],
+                $row['role'],
+                $row['active']
+            );
+            $_SESSION['user']= $row['id'];
+            $logged_in = 1;
+             array_push($rvsp, $user);
+             array_push($rvsp, $logged_in);
+        }
+        else{
+            $error = 'nema usera u bazi';
+            $logged_in = 0;
+            array_push($rvsp, $error);
+            array_push($rvsp, $logged_in);
+        }
         echo json_encode($rvsp);
     break;
     case 'logout':
-        //kodčina ide tu
+        session_destroy();
     break;
     case 'register':
         $username = $postdata->username;
@@ -145,6 +159,14 @@ switch($actionID)
         $sql = "exec user_register '".$username."', '".$password."', '".$firstname."', '".$lastname."','".$email."', '".$birth_date."', '".$phone."';";
         $record = $conn->query($sql);
     break;
+    case 'check_logged_in':
+		if( isset($_SESSION['user'])){
+			echo 1;
+		}
+		else{
+			echo 0;
+		}
+	break;
     case 'approve_user':
         $user_id = $postdata->user_id;
         $sql = "exec user_active ".$user_id.";";
@@ -156,31 +178,5 @@ switch($actionID)
         $record = $conn->query($sql);
     break;
     //pomoćne funkcije
-    case 'image_upload':
-        if(!empty($_FILES))  
-        {  
-             $path = 'upload/' . $_FILES['file']['name'];  
-             if(move_uploaded_file($_FILES['file']['tmp_name'], $path))  
-             {  
-                $image_path = $_FILES['file']['name'];
-                //array_push($rvsp, $image_path);
-                echo json_encode($image_path);
-                 /*//$post_title = $postdata->title;
-                 //$post_content = $postdata->content;
-                 //$user_id = $postdata->user_id;
-                 //$sql = "exec post_new '".$post_title."', '".$post_content."', ('lifeonadelay/upload/".$_FILES['file']['name']."'), ".$user_id." ;" ;
-                 //$record = $conn->query($sql);
-                 /* $sql = "INSERT INTO tbl_images(name) VALUES ('".$_FILES['file']['name']."')";
-                 if($record = $conn->query($sql))
-                 {  
-                      echo 'File Uploaded';  
-                 }  
-                 else  
-                 {  
-                      echo 'File Uploaded But not Saved';  
-                 } */ 
-             }  
-        }  
-    break;
 }
 ?>

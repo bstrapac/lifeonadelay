@@ -3,6 +3,7 @@ ini_set('memory_limit', '2048M');
 header('Content-type: text/json');
 header('Content-type: application/json; charset=utf-8');
 include "connection.php";
+session_start();
 
 $jsonID="";
 if(isset($_GET['json_id']))

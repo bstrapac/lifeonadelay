@@ -27,6 +27,7 @@ admin.config(function($routeProvider){
         controller: "admin_cntrl"
     });
 });
+
 admin.directive("fileInput", function($parse){
     return{
         link: function($scope, element, attrs){
@@ -38,10 +39,29 @@ admin.directive("fileInput", function($parse){
         }
     }
 });
-admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location ){
+
+admin.factory('Authentication', function( $cookies ){
+	var auth = {};
+	auth.GetLoginStatus = function(){
+		if( $cookies.get('logged_user')){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	auth.SetLoggedUser = function( LoggedUser){
+		$cookies.put('logged_user', LoggedUser)
+	}
+	auth.Logout = function(){
+		$cookies.remove('logged_user')
+	}
+	return auth;
+});
+admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location, $cookies, Authentication ){
     $scope.passParam = function(param){
         $scope.paramPassed = param;
-    }
+    };
     $scope.img = '';
     $scope.uploadFile = function(){
         var postdata = new FormData();
@@ -56,11 +76,78 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             console.log($scope.img);
         });
     };
-    $scope.images = [];
-    $scope.select = function(){
-        $http.get("select.php")
-        .then(function(response){
-            $scope.images = response.data;
+    $scope.ulogiran = false;
+	if( Authentication.GetLoginStatus() == false ){
+		$location.path('/login');
+	}
+	$http.post('action.php', {action_id: 'check_logged_in'})
+	    .then(function (response){
+		    	if( response.data == 1 ){
+		    		$scope.ulogiran = true;
+		    	}
+		    	else{
+		    		$scope.ulogiran = false;
+		    		$location.path('/login');
+		    	}
+		    },function (e){
+		    	console.log('error');
+	    		$scope.ulogiran = false;
+		 	}
+    );
+    $scope.user = [];
+    $scope.Login = function(){
+        var postData={
+            'action_id' : 'login',
+            'email' : $scope.email,
+            'password' : $scope.password
+        };
+        $http.post('action.php', postData).then
+        (function(response){
+            if( response.data[1] == 1 )
+		    	{
+                    $scope.ulogiran = true;
+                    $scope.user = response.data[0];
+		    		Authentication.SetLoggedUser($scope.user.id);
+                    $location.path('/');
+                    console.log( $scope.user.id);
+		    	}
+		    	else
+		    	{
+		    		$location.path('/login');
+		    		alert('Netočni podaci. Pokušajte ponovno');
+		    	}
+        }, function (e){
+            console.log(e);
+        });
+    };
+    $scope.Logout = function(){
+        var postData = {
+            'action_id' : 'logout'
+        };
+        $http.post('action.php', postData).then
+        (function(response){
+            //console.log(response.data);
+            $location.path('/login');
+        }, function(e){
+            console.log(e);
+        });
+    };
+    $scope.Register = function(){
+        var postData = {
+            'action_id' : 'register',
+            'username' : $scope.username,
+            'firstname' : $scope.firstname,
+            'lastname' : $scope.lastname,
+            'email' : $scope.email_reg,
+            'password' : $scope.password_reg,
+            'phone' : $scope.phone,
+            'birth_date' : $scope.birth_date
+        };
+        $http.post('action.php', postData).then
+        (function(response){
+            //console.log(response.data);
+        }, function(e){
+            console.log(e);
         });
     };
     //FUNKCIJE ZA MANIPULACIJU POSTOVIMA
@@ -116,14 +203,14 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             console.log(e);
         });
     };
-    $scope.AddNewPost = function( user_id, img ){
-        console.log(img.replace('"', ''));
+    $scope.AddNewPost = function(){
+        //console.log($scope.img);
         var postData= {
             'action_id': 'add_post',
             'title' : $scope.new_title,
             'content' : $scope.new_content,
-            'image' : img.replace('"',''),
-            'user_id' : user_id
+            'image' : $scope.img,
+            'user_id' : $cookies.get('logged_user')
         }
         $http.post('action.php', postData).then
         (function(response){
@@ -166,50 +253,6 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         });
     };
     //FUNKCIJE ZA KORISNIKE
-    $scope.Login = function(){
-        var postData={
-            'action_id' : 'login',
-            'email' : $scope.email,
-            'password' : $scope.password
-        };
-        $http.post('action.php', postData).then
-        (function(response){
-            //console.log(postData);
-            $location.path('/');
-        }, function (e){
-            console.log(e);
-        });
-    };
-    $scope.Logout = function(){
-        var postData = {
-            'action_id' : 'logout'
-        };
-        $http.post('action.php', postData).then
-        (function(response){
-            //console.log(response.data);
-            $location.path('/login');
-        }, function(e){
-            console.log(e);
-        });
-    };
-    $scope.Register = function(){
-        var postData = {
-            'action_id' : 'register',
-            'username' : $scope.username,
-            'firstname' : $scope.firstname,
-            'lastname' : $scope.lastname,
-            'email' : $scope.email_reg,
-            'password' : $scope.password_reg,
-            'phone' : $scope.phone,
-            'birth_date' : $scope.birth_date
-        };
-        $http.post('action.php', postData).then
-        (function(response){
-            //console.log(response.data);
-        }, function(e){
-            console.log(e);
-        });
-    };
     $scope.users = [];
     $scope.LoadPendingUsers = function(){
         $http({
