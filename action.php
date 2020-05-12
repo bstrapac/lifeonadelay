@@ -119,7 +119,6 @@ switch($actionID)
         $row = $record->fetch();
         $count = $record->rowCount();
         $rvsp = array();
-        //echo $count;
         if($count != 0){
             $user = new User(
                 $row['id'],
@@ -158,6 +157,7 @@ switch($actionID)
         $birth_date = $postdata->birth_date;
         $sql = "exec user_register '".$username."', '".$password."', '".$firstname."', '".$lastname."','".$email."', '".$birth_date."', '".$phone."';";
         $record = $conn->query($sql);
+        echo $birth_date;
     break;
     case 'check_logged_in':
 		if( isset($_SESSION['user'])){
@@ -177,6 +177,5 @@ switch($actionID)
         $sql = "exec user_delete_pending ".$user_id.";";
         $record = $conn->query($sql);
     break;
-    //pomoćne funkcije
 }
 ?>

@@ -6,12 +6,12 @@ include "connection.php";
 session_start();
 
 $jsonID="";
+$postData = file_get_contents("php://input");
+$postdata = json_decode ($postData);
 if(isset($_GET['json_id']))
 {
 	$jsonID=$_GET['json_id'];
 }
-$postData = file_get_contents("php://input");
-$postdata = json_decode ($postData);
 if(isset($_POST['json_id']))
 {
     $jsonID = $postdata->json_id;
