@@ -5,17 +5,11 @@
     <div class="col-12 col-md-9">
         <textarea name="textarea-input" id="textarea-input" rows="15" placeholder="Sadržaj..." class="form-control" ng-model="new_content"></textarea>
     </div>
-</div>
-<div class="row form-group">
     <div class="col col-md-3">
         <label for="file-input" class=" form-control-label">Dodaj sliku</label>
+        <input type="file" id="file-input" name="file-input" class="form-control-file" file-input="files"><br>
+        <button class="btn btn-primary btn-sm" ng-click="uploadFile()">Spremi</button>
     </div>
-    <div class="col-12 col-md-9">
-        <input type="file" id="file-input" name="file-input" class="form-control-file" file-input="files">
-    </div>
-    <div class="col-md-6">  
-        <button class="btn btn-info" ng-click="uploadFile()">Upload</button>  
-   </div>
 </div>
 <div class="card-footer">
     <button type="submit" class="btn btn-primary btn-sm" ng-click="AddNewPost()">

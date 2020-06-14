@@ -6,28 +6,28 @@
         <hr>
         <div class="in-content">
             <img class="right" src="../lifeonadelay/upload/{{pst.image}}" alt="">
-            <p>
+            <p style="white-space: pre-line;" >
                 {{pst.content}}
             </p>
         </div>
         <div class="foot-post">
             <div class="units-row">
                 <div class="unit-100">
-                    <a>{{pst.date | limitTo: 10  | date: dd.mm.yyyy}}</a>,
+                    <a>{{pst.date | limitTo: 10  | date: 'dd.MM.yyyy'}}</a>,
                     <a>{{pst.author_name}}</a>,
                 </div>
             </div>
         </div>
     </div>
-    <div ng-init="LoadComments( post_id )">
+   <div ng-init="LoadComments( post_id )">
         <div class="post_comments" ng-repeat="cmnt in comments">
             <div class="comment" >
                 <div class="comment_author">
-                    {{cmnt.username}}, {{cmnt.date | limitTo: 10 | date: dd.mm.yyyy}}
+                    {{cmnt.username}}, {{cmnt.date | limitTo: 10 | date: 'dd.MM.yyyy'}}
                 </div>
-                    <a class="read-more delete_comment" ng-click="DeleteComment( cmnt.id )">×</a>
+                    <!--<a class="read-more delete_comment" ng-click="DeleteComment( cmnt.id )">×</a>-->
                 <div class="comment_content">
-                    <p>
+                    <p style="white-space: pre-line;">
                         {{cmnt.content}}
                     </p>
                 </div>
@@ -36,13 +36,13 @@
     </div>
     <div class="add_coment">
         <form>
-            <label>Dodaj komentar: </label><br>
+            <label>Reci nam što misliš: </label><br>
             <textarea id="nickname" ng-model="nickname" placeholder="Nadimak" cols="1" rows="1"></textarea>
             <br>
             <label for="new_comment"></label>
             <textarea id="new_comment" ng-model="new_comment" placeholder="Komentar..." cols="1" rows="5"></textarea>
             <br>
-            <a class="read-more" type="submit" ng-click="AddNewComment( post_id )">Dodaj komentar</a>
+            <a class="read-more" type="submit" ng-click="AddNewComment( post_id )">Komentiraj</a>
         </form>
     </div>
 </div>

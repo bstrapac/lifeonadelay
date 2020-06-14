@@ -9,6 +9,13 @@ public.config(function($routeProvider){
     .when("/post_single/:post_id",{
        templateUrl:"templates/post_single.html",
        controller: "cntrl"
+   })
+   .when("/authors",{
+       templateUrl:"templates/authors.html",
+       controller: "cntrl"
+   })
+   .otherwise({
+       redirectTo: "/"
    });
 });
 public.controller("cntrl", function($scope, $routeParams, $http, $route){
@@ -21,7 +28,6 @@ public.controller("cntrl", function($scope, $routeParams, $http, $route){
 			url: 'json.php?json_id=get_last_posts'
 		}).then(function(response) {
             $scope.posts = response.data;
-            //console.log(response.data);
 		}, function(e) {
 			console.log(e);
 		});
@@ -31,7 +37,29 @@ public.controller("cntrl", function($scope, $routeParams, $http, $route){
             method: 'GET',
             url: 'json.php?json_id=get_all_posts'
         }).then(function(response){
-            $scope.posts = reponse.data;
+            $scope.posts = response.data;
+        }, function(e){
+            console.log(e);
+        });
+    };
+    $scope.authors = [];
+    $scope.LoadAllUsers = function(){
+        $http({
+            method: 'GET',
+            url: 'json.php?json_id=get_users'
+        }).then(function(response){
+            $scope.authors = response.data;
+        }, function(e){
+            console.log(e);
+        });
+    };
+    $scope.ShowUser = function(){
+        $http({
+            method: 'GET',
+            url: 'json.php?json_id=get_user&name='+$scope.author
+        }).then(function(response){
+            $scope.author_name = response.data.firstname;
+            $scope.author_lastname = response.data.lastname;
         }, function(e){
             console.log(e);
         });
@@ -82,7 +110,6 @@ public.controller("cntrl", function($scope, $routeParams, $http, $route){
         }
         $http.post('action.php', postData).then
         (function(response){
-            //console.log(response.data);
             $route.reload();
         },
         function(e){
@@ -103,4 +130,47 @@ public.controller("cntrl", function($scope, $routeParams, $http, $route){
             console.log(e);
         });
     };
+});
+
+//JS funkcije XSS primjeri
+$(document).ready(function(){
+    $(".btn_search").click(function(){
+        var user_name = $(".author").val();
+        const url= 'json.php?json_id=get_user&name='+user_name;
+        console.log(user_name);
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(result){
+                $(".searched_info").html("Pretražili ste: " + user_name);
+                $(".result").text(result.firstname +" "+ result.lastname);
+                console.log(result);
+            },
+            error: function(e){
+                console.log(e);
+            }
+        });
+    });
+
+    $(".load").click(function LoadComment(){
+        console.log('fja');
+        const url = 'action.php';
+        const action_id ='get_comments';
+        const post_id = 1;
+        $.post( url, 
+            {
+                action_id : action_id,
+                post_id: post_id
+            }, 
+            function(result){
+                console.log(result);
+                $.each(result, function(){
+                    console.log(this);
+                    $(".comment_author").html(this.username);
+                    $(".comment_content").html(this.content);
+                });                
+            }, 
+            'json'
+        );
+    });
 });

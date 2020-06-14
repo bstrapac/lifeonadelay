@@ -1,0 +1,15 @@
+<div>
+	<div>
+		<input type="text" style="width:100%; margin-bottom: 20px;" ng-model="author"> <br>
+	</div>
+	<a class="read-more" type="submit" ng-click="ShowUser()" style="margin-bottom: 15px;">Pretraži</a>
+	<a class="read-more" type="submit" ng-click="LoadAllUsers()" style="margin-bottom: 15px;">Prikaži sve</a>
+	<div class="post" style="margin-top: 51px;">
+		<a>
+			<h1>{{author_name}} {{author_lastname}}</h1>
+		</a>
+		<a ng-repeat="author in authors">
+			<h1>{{author.firstname}} {{author.lastname}}</h1>
+		</a>
+	</div>
+</div>

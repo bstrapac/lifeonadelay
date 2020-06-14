@@ -5,16 +5,16 @@
 		</a>
 		<hr>
 		<div class="in-content">
-			<img class="right" src="../lifeonadelay/upload/{{post.image}}" alt="">
+			<img class="right publicImg" src="../lifeonadelay/upload/{{post.image}}" alt="">
 			<p>
 				{{post.content | limitTo: 500}}... 
 			</p>
-			<a class="read-more" href="#!post_single/{{post.id}}">Read more</a>
+			<a class="read-more" href="#!post_single/{{post.id}}">Pročitaj više</a>
 		</div>
 		<div class="foot-post">
 			<div class="units-row">
 				<div class="unit-100">
-					<a>{{post.date | limitTo: 10  | date: dd.mm.yyyy}}</a>,
+					<a>{{post.date | limitTo: 10  | date: 'dd.MM.yyyy'}}</a>,
 					<a>{{post.author_name}}</a>
 				</div>
 			</div>

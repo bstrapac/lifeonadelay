@@ -7,8 +7,8 @@ admin.config(function($routeProvider){
         controller: "admin_cntrl"
    })
    .when("/edit_post/:post_id",{
-    templateUrl:"templates/edit_post.html",
-    controller: "admin_cntrl"
+        templateUrl:"templates/edit_post.html",
+        controller: "admin_cntrl"
     })
     .when("/add_new",{
         templateUrl:"templates/new_post.html",
@@ -22,9 +22,8 @@ admin.config(function($routeProvider){
         templateUrl:"templates/login.html",
         controller: "admin_cntrl"
     })
-    .when("/register",{
-        templateUrl:"templates/register.html",
-        controller: "admin_cntrl"
+    .otherwise({
+        redirectTo: "/login"
     });
 });
 
@@ -44,10 +43,10 @@ admin.factory('Authentication', function( $cookies ){
 	var auth = {};
 	auth.GetLoginStatus = function(){
 		if( $cookies.get('logged_user')){
-			return true;
+            return true;
 		}
 		else{
-			return false;
+            return false;
 		}
 	}
 	auth.SetLoggedUser = function( LoggedUser){
@@ -58,7 +57,92 @@ admin.factory('Authentication', function( $cookies ){
 	}
 	return auth;
 });
-admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location, $cookies, Authentication ){
+admin.factory('Security', function(){
+    var chars={
+        '&' : '&amp;',
+        '<' : '&lt;',
+        '>' : '&gt;',
+        '&' : '&amp;',
+        '"' : '&quot;',
+        "'" : '&#39;',
+        '{' : '&{;',
+        '}' : '&};',
+        '=' : '&=;',
+        '^' : '&^;',
+        '|' : '&|;',
+        '%' : '&%;',
+        '+' : '&+;',
+        '-' : '&-;',
+        '/' : '&/;',
+        '.' : '.'
+    };
+    var tagWhiteList = [
+        'a',
+        '/a',
+        'b',
+        '/',
+        'br',
+        'i' ,        
+        '/i',
+        'img',
+        'p',
+        '/p' ,
+        'span',
+        '/span' ,
+        'strong',
+        '/strong' 
+    ];
+    var fj = {};
+    //“g” flag indicates that the regular expression should be tested against all possible matches in a string
+    //“i” parameter helps to find the case-sensitive match in the given string
+    fj.escape = function(value){
+        return value.replace( /[&<>'"}{=^|%+-/]/g, function(s){
+            return chars[s];
+        });
+    } 
+    fj.filter = function(value){
+        return value.replace( /[&<>'"}{=^|%+-/]/g, ' ');
+    }
+    fj.validate = function(value){
+        if(value.match(/^[A-Za-z0-9]+$/)){
+            return true;
+        }
+        return false;
+    }
+    fj.validateEmail = function(value){
+        atpos = value.indexOf('@');
+        dotpos = value.lastIndexOf('.');
+        if(atpos < 1 || dotpos-atpos < 2 ){
+            return false;
+        }
+        return true; 
+    }
+    fj.sanitizeHTML = function(value){
+        var tagProp = '';
+        var pos1, pos2;
+        for(var i=0; i < value.length; i++)
+        {
+            if(value.substring(i+1, i) === '<'){
+                pos1 = i;
+            }
+            if(value.substring(i+1, i) === '>'){
+                pos2 = i;
+            }
+            if(pos2 != null && pos1 < pos2 )
+            {
+                tagProp = value.substring(pos1 +1, pos2);
+            }
+        }
+            if(tagWhiteList.includes(tagProp)){
+                return value;
+            }
+            else{
+                return value.replace(tagProp, '').replace('<', '').replace('>', '');
+            };
+    }
+    return fj;
+});
+admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $location, $cookies, $window , Authentication, Security ){
     $scope.passParam = function(param){
         $scope.paramPassed = param;
     };
@@ -73,21 +157,25 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             headers :{'Content-Type': undefined, 'Process-Data': false}
         }).then(function(response){
             $scope.img = response.data;
-            console.log($scope.img);
+            //console.log($scope.img);
         });
     };
     $scope.ulogiran = false;
 	if( Authentication.GetLoginStatus() == false ){
-		$location.path('/login');
+        $location.path('/login');
 	}
 	$http.post('action.php', {action_id: 'check_logged_in'})
 	    .then(function (response){
 		    	if( response.data == 1 ){
-		    		$scope.ulogiran = true;
+                    $scope.ulogiran = true;
+                    $(angular.element('#left-panel')[0]).css('display', 'table-cell');
+                    $(angular.element('#header')[0]).css('display', 'inline-block');
 		    	}
 		    	else{
 		    		$scope.ulogiran = false;
-		    		$location.path('/login');
+                    $location.path('/login');
+                    $(angular.element('#left-panel')[0]).css('display', 'none');
+                    $(angular.element('#header')[0]).css('display', 'none');
 		    	}
 		    },function (e){
 		    	console.log('error');
@@ -96,24 +184,34 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
     );
     $scope.user = [];
     $scope.Login = function(){
+        $scope.validMail = '';
+        $scope.validPassword = '';
+        if($scope.email != '' && Security.validateEmail($scope.email) == true)
+        {
+            $scope.validMail = $scope.email;
+        }else{
+            console.log('Enter valid email.');
+        };
+        if($scope.password != ' ' && $scope.password != ''){
+            $scope.validPassword = $scope.password;
+        }else{
+            console.log('Enter password.');
+        }
         var postData={
             'action_id' : 'login',
-            'email' : $scope.email,
-            'password' : $scope.password
+            'email' : $scope.validMail,
+            'password' : $scope.validPassword
         };
         $http.post('action.php', postData).then
         (function(response){
-            if( response.data[1] == 1 )
-		    	{
+            if( response.data[1] == 1 ){
                     $scope.ulogiran = true;
                     $scope.user = response.data[0];
 		    		Authentication.SetLoggedUser($scope.user.id);
                     $location.path('/');
-                    console.log( $scope.user.id);
 		    	}
-		    	else
-		    	{
-		    		$location.path('/login');
+		    	else{
+                    $location.path('/login');
 		    		alert('Netočni podaci. Pokušajte ponovno');
 		    	}
         }, function (e){
@@ -174,31 +272,20 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
             console.log(e);
         });
     };
-    $scope.post = [];
-    $scope.post_id = $routeParams.post_id;
-    $scope.LoadPost = function(post_id){
-        var postData = {
-            'action_id' : 'get_single_post',
-            'post_id' : post_id
-        }
-        $http.post('action.php', postData).then
-        (function(response){
-            $scope.post = response.data;
-        }, function(e){
-            console.log(e);
-        });
-    };
     $scope.EditPost = function(post_id){
-        var new_title = angular.element( document.querySelector( '.new_title' ) );
-        var new_content = angular.element( document.querySelector( '.new_content' ) );
+        var new_title = angular.element(document.querySelector('.new_title')).val();
+        var new_content = angular.element(document.querySelector('.new_content')).val();
+        var validTitle = Security.sanitizeHTML(new_title);
+        var validContent = Security.sanitizeHTML(new_content);
         var postData ={
             'action_id' : 'edit_post',
             'post_id' : post_id,
-            'new_title' : new_title.val(),
-            'new_content' : new_content.val()
+            'new_title' : validTitle,
+            'new_content' : validContent
         }
         $http.post('action.php', postData).then
         (function(response){
+            $location.path('/');
         }, function(e){
             console.log(e);
         });
@@ -247,7 +334,7 @@ admin.controller("admin_cntrl", function($scope, $routeParams, $http, $route, $l
         $http.post('action.php', postData).then
         (function(response){
             $scope.post = response.data;
-            //console.log($scope.post);
+            console.log($scope.post);
         }, function(e){
             console.log(e);
         });

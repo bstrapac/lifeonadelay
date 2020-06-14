@@ -24,15 +24,15 @@ switch($jsonID)
         $record=$conn->query($sql);
         while($row=$record->fetch(PDO::FETCH_BOTH))
         {
-        $post=new Post(
-            $row['id'],
-            $row['title'],
-            $row['content'],
-            $row['date'],
-            $row['image'],
-            $row['author_name']
-        );
-        array_push($json,$post);
+            $post=new Post(
+                $row['id'],
+                $row['title'],
+                $row['content'],
+                $row['date'],
+                $row['image'],
+                $row['author_name']
+            );
+            array_push($json,$post);
         }
     break;
     case 'get_all_posts':
@@ -87,6 +87,22 @@ switch($jsonID)
                 $row['active']
             );
             array_push($json,$user);
+        }
+    break;
+    case 'get_user':
+        if(isset($_GET['name'])){
+            $name = $_GET['name'];
+        };
+        $sql = $conn->prepare("SELECT firstname, lastname FROM users WHERE username = :name;");
+        $sql->bindParam('name', $name);
+        $sql->execute();
+        $record = $sql->fetch();
+        if($record != null){
+            $json['firstname'] = $record['firstname'];
+            $json['lastname'] = $record['lastname'];
+        }
+        else{
+            $json = 'greška';
         }
     break;
 }
